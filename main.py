@@ -50,15 +50,16 @@ m = mega.login(os.getenv('user'), os.getenv("pass"))
 
 details = m.get_user()
 
-# Directory to save downloaded and extracted files
+# Directory to save downloaded files
 download_dir = "downloaded_files/"
 
 if not os.path.exists(download_dir):
     os.makedirs(download_dir)
 
-# Loop through the RAR download links
-for link in rar_links:
-    # Download the RAR file (you may need to use a download manager or similar)
+# Download RAR files
+downloaded_files = []
+
+for i, link in enumerate(rar_links):
     # Extract the filename from the URL
     filename = link.split('/')[-1]
     # Set the path where you want to save the downloaded file
@@ -71,11 +72,14 @@ for link in rar_links:
             for chunk in response.iter_content(1024):
                 file.write(chunk)
         print(f"Downloaded: {filename}")
+        downloaded_files.append(download_path)
     else:
         print(f"Failed to download: {filename}")
 
-    # Unrar the downloaded file
-    Archive(link).extractall(download_dir)
+# Extract downloaded RAR files
+for downloaded_file in downloaded_files:
+    Archive(downloaded_file).extractall(download_dir)
+    print(f"Extracted: {downloaded_file}")
 
 # Upload the extracted files to Mega
 for root, dirs, files in os.walk(download_dir):
@@ -101,4 +105,4 @@ for root, dirs, files in os.walk(download_dir, topdown=False):
 if os.path.exists(download_dir):
     os.rmdir(download_dir)
 
-print("Files uploaded to Mega successfully.")
+print("Files downloaded, extracted, and uploaded to Mega successfully.")
