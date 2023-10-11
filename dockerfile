@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install pyunpack patool mega.py python-dotenv
+RUN pip install pyunpack mega.py python-dotenv
 
 # Make sure you have the .env file in the same directory as the Dockerfile
 # You may also copy it to the container if necessary
