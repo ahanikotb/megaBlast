@@ -2,13 +2,14 @@ from dotenv import load_dotenv
 import os
 from pyunpack import Archive
 from mega import Mega
+import requests
 
 # Load the environment variables from .env
 load_dotenv()
 import os
 
 
-links="""https://42.download.real-debrid.com/d/GWV5SWTWK757O/Stefan.Georgi.Justin.Goff.Copy.Accelerator.Virtual.Mastermind.02.19.part02.rar
+rar_links="""https://42.download.real-debrid.com/d/GWV5SWTWK757O/Stefan.Georgi.Justin.Goff.Copy.Accelerator.Virtual.Mastermind.02.19.part02.rar
 https://42.download.real-debrid.com/d/I34XTTFLKH4KU/Stefan.Georgi.Justin.Goff.Copy.Accelerator.Virtual.Mastermind.02.19.part04.rar
 https://42.download.real-debrid.com/d/EG34T6VLMNRLI/Stefan.Georgi.Justin.Goff.Copy.Accelerator.Virtual.Mastermind.02.19.part06.rar
 https://42.download.real-debrid.com/d/4BQUWEMQSEYQK/Stefan.Georgi.Justin.Goff.Copy.Accelerator.Virtual.Mastermind.02.19.part08.rar
@@ -58,7 +59,21 @@ if not os.path.exists(download_dir):
 # Loop through the RAR download links
 for link in rar_links:
     # Download the RAR file (you may need to use a download manager or similar)
-    
+    # Extract the filename from the URL
+    filename = link.split('/')[-1]
+    # Set the path where you want to save the downloaded file
+    download_path = os.path.join(download_dir, filename)
+
+    # Download the RAR file
+    response = requests.get(link, stream=True)
+    if response.status_code == 200:
+        with open(download_path, 'wb') as file:
+            for chunk in response.iter_content(1024):
+                file.write(chunk)
+        print(f"Downloaded: {filename}")
+    else:
+        print(f"Failed to download: {filename}")
+
     # Unrar the downloaded file
     Archive(link).extractall(download_dir)
 
